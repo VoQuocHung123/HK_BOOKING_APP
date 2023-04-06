@@ -65,21 +65,36 @@ export const getById = async (req, res) => {
   }
 };
 
-export const getAllCar = async (req,res,next)=>{
-    try {
-      let obj = {}
-      const limit = Number(req.query.limit)
-      const page = Number(req.query.page)
-      const skip = limit * (page-1)
-      const countCars = await Cars.find(obj).countDocuments()
-      if(limit && page ){
-        const cars = await Cars.find(obj).skip(skip).limit(limit);
-        res.status(200).json({cars,countCars});
-      }else{
-        const cars = await Cars.find(obj)
-        res.status(200).json({cars,countCars});
-      }
-    } catch (error) {
-        res.status(500).json(error)
+export const getAllCar = async (req, res, next) => {
+  try {
+    let obj = {};
+    const limit = Number(req.query.limit);
+    const page = Number(req.query.page);
+    const skip = limit * (page - 1);
+    const title = req.query.title;
+    const pricemin = req.query.pricemin;
+    const pricemax = req.query.pricemax;
+    const category = req.query.category;
+
+    if (title) {
+      const content = new RegExp(`.*${title}.*`);
+      obj.name = content;  
     }
-}
+    if (pricemin || pricemax) {
+      obj.price = { $gte: pricemin, $lte: pricemax };
+    }
+    if (category) {
+      obj.category = req.query.category;
+    }
+    const countCars = await Cars.find(obj).countDocuments();
+    if (limit && page) {
+      const cars = await Cars.find(obj).skip(skip).limit(limit);
+      res.status(200).json({ cars, countCars });
+    } else {
+      const cars = await Cars.find(obj);
+      res.status(200).json({ cars, countCars });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

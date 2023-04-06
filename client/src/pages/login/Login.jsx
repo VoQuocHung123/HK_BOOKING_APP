@@ -13,9 +13,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import { login } from "../../redux/apiRequest";
 
 const theme = createTheme();
 
@@ -24,8 +26,12 @@ export default function Login() {
     username: undefined,
     password: undefined,
   });
-  const { loading, error, dispatch } = useContext(AuthContext);
+  // const { loading, error, dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.user.loading);
+  const error = useSelector((state) => state.user.error);
+  const [messageErr ,setMessageErr] = useState('')
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
   const handleCloseAlert = () => {
     setOpenAddSnackbar(false);
@@ -36,22 +42,34 @@ export default function Login() {
   };
   const handleClick = async (e) => {
     e.preventDefault();
-    dispatch({ type: "LOGIN_START" });
-    try {
-      axios.defaults.withCredentials = true;
-      const res = await axios.post(
-        "http://localhost:3001/api/auth/login",
-        credentials
-      );
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data.details });
-      setOpenAddSnackbar(true)
-      setTimeout(()=>{
-        navigate('/');
-      },1500)
-      
-    } catch (err) {
-      dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
-    }
+    dispatch(login(credentials)).unwrap().then(() => {
+      setMessageErr('')
+      setOpenAddSnackbar(true);
+      setTimeout(() => {
+        navigate("/");  
+      }, 1500);
+    }).catch((err)=>{
+      console.log(err.message)
+      setOpenAddSnackbar(true);
+      setMessageErr(err.message)
+    })
+
+    // dispatch({ type: "LOGIN_START" });
+    // try {
+    //   axios.defaults.withCredentials = true;
+    //   const res = await axios.post(
+    //     "http://localhost:3001/api/auth/login",
+    //     credentials
+    //   );
+    //   dispatch({ type: "LOGIN_SUCCESS", payload: res.data.details });
+    //   setOpenAddSnackbar(true)
+    //   setTimeout(()=>{
+    //     navigate('/');
+    //   },1500)
+
+    // } catch (err) {
+    //   dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+    // }
   };
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -136,7 +154,7 @@ export default function Login() {
                   onChange={handleChange}
                   autoComplete="current-password"
                 />
-                <p style={{color: 'red'}}>{error && error.message}</p>
+                <p style={{ color: "red" }}>{error?.message}</p>
                 <Button
                   type="submit"
                   fullWidth
@@ -161,13 +179,13 @@ export default function Login() {
         </Grid>
       </ThemeProvider>
       <Snackbar
-        anchorOrigin={{vertical: 'top',horizontal: 'right'}}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openAddSnackbar}
         onClose={handleCloseAlert}
         autoHideDuration={1500}
       >
-        <Alert variant="filled" severity="success" onClose={handleCloseAlert}>
-              Đăng Nhập Thành Công
+        <Alert variant="filled" severity={messageErr ? 'error' : 'success'} onClose={handleCloseAlert}>
+          {messageErr ? 'Đăng nhập thất bại': 'Đăng nhập thành công'}
         </Alert>
       </Snackbar>
     </>

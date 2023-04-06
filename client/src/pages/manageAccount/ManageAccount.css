@@ -20,12 +20,21 @@
 }
 .left-manage-item {
   cursor: pointer;
-  padding: 10px 0px;
+  width: 200px;
+  padding: 10px 5px;
 }
+
 .left-manage-item:hover {
+  background-color: white;
+  border-radius: 10px;
   color: #003580;
-  font-weight: bold;
 }
+.active-side-bar{
+  background-color: white;
+  border-radius: 10px;
+  color: #003580;
+}
+
 .right-manage {
   width: 75%;
   height: 450px;
@@ -89,4 +98,8 @@ label {
 .msg-err{
   color: red;
   font-size: medium;
+}
+.left-manage-item .activeSB {
+  background-color: #003580;
+  color: white; 
 }

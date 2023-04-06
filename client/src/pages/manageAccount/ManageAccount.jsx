@@ -14,14 +14,17 @@ import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { Link } from "react-router-dom";
 import SideBar from "../../components/sidebar/SideBar";
+import Footer from "../../components/footer/Footer";
+import { useSelector } from "react-redux";
+
 
 export default function ManageAccount() {
   
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
+  const user = useSelector(state => state.user.user)
   const [file, setFile] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [dataUser, setDataUser] = useState(user);
-  console.log(dataUser)
   const SUPPORTED_FORMATS = [
     "image/jpg",
     "image/jpeg",
@@ -84,12 +87,12 @@ export default function ManageAccount() {
       gender: Yup.string().required("Chọn giới tính"),
     }),
     onSubmit: (values) => {
+      console.log(values)
       updateUser(values);
     },
   });
   return (
     <>
-   
       <Navbar />
       <Header type="list" />
       <div className="container-account">
@@ -235,18 +238,22 @@ export default function ManageAccount() {
                     formik.errors.gender}
                 </p>
               </div>
+     
               <button className="btn-save-info" type="submit">
                 Xác Nhận
               </button>
+              
             </form>
           </div>
         </div>
       </div>
+      <Footer></Footer>
       <Snackbar open={openSnackbar} onClose={handleCloseAlert} autoHideDuration={1500}>
         <Alert variant="filled" onClose={handleCloseAlert} severity="success">
           Chỉnh sửa người dùng thành công
         </Alert>
       </Snackbar>
+
     </>
   );
 }

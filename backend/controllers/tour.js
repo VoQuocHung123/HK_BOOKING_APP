@@ -73,8 +73,11 @@ export const getAll = async (req, res) => {
     if(dateend){
       obj.dateend = req.query.dateend
     }
-    if(pricemin || pricemax){
+    if(pricemin && pricemax){
       obj.priceadults = {$gte: pricemin, $lte: pricemax}
+    }
+    if(!pricemax && pricemin){
+      obj.priceadults = {$gte: pricemin}
     }
     if(category){
       obj.category = req.query.category
@@ -83,7 +86,7 @@ export const getAll = async (req, res) => {
     const skip = limit * (page-1)
     const countTour = await Tour.find(obj).countDocuments()
     if(limit && page ){
-      const tours = await Tour.find(obj).skip(skip).limit(limit);
+      const tours = await Tour.find(obj).skip(skip).limit(limit).sort({ _id: -1 })
       res.status(200).json({tours,countTour});
     }else{
       const tours = await Tour.find(obj)
@@ -95,7 +98,7 @@ export const getAll = async (req, res) => {
 };
 export const getNewTour = async (req,res,next)=>{
   try {
-    const newTour = await Tour.find().limit(3)
+    const newTour = await Tour.find().limit(3).sort({ _id: -1 })
     res.status(200).json(newTour)
   } catch (error) {
     next(error)
@@ -104,7 +107,6 @@ export const getNewTour = async (req,res,next)=>{
 export const getTourIn = async (req,res,next)=>{
   try {
     const tourIn = await Tour.find({category: 'Tour Trong Nước'})
-    console.log(tourIn)
     res.status(200).json(tourIn)
   } catch (error) {
     next(error)
@@ -113,7 +115,6 @@ export const getTourIn = async (req,res,next)=>{
 export const getTourOut = async (req,res,next)=>{
   try {
     const tourOut = await Tour.find({category: 'Tour Ngoài Nước'})
-    console.log(tourOut)
     res.status(200).json(tourOut)
   } catch (error) {
     next(error)

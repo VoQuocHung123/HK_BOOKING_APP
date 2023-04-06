@@ -16,6 +16,8 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "../../redux/apiRequest";
 
 const theme = createTheme();
 
@@ -23,9 +25,12 @@ export default function Register() {
   const [credentials, setCredentials] = useState({
     username: undefined,
     password: undefined,
-    email: undefined
+    email: undefined,
   });
-  const { loading, error, dispatch } = useContext(AuthContext);
+  // const { loading, error, dispatch } = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.user.loading);
+  const error = useSelector((state) => state.user.error);
   const navigate = useNavigate();
   const [openAddSnackbar, setOpenAddSnackbar] = useState(false);
   const handleCloseAlert = () => {
@@ -37,20 +42,28 @@ export default function Register() {
   };
   const handleClick = async (e) => {
     e.preventDefault();
-    try {
-      axios.defaults.withCredentials = true;
-      const res = await axios.post(
-        "http://localhost:3001/api/auth/register",
-        credentials
-      );
-      dispatch({ type: "REGISTER_SUCCESS", payload: res.data.details });
-      setOpenAddSnackbar(true)
-      setTimeout(()=>{
-        navigate('/login');
-      },1000)
-    } catch (err) {
-      dispatch({ type: "REGISTER_FAILURE", payload: err.response.data });
-    }
+    dispatch(register(credentials))
+      .unwrap()
+      .then(() => {
+        setOpenAddSnackbar(true);
+        setTimeout(()=>{
+              navigate('/login');
+            },1000)
+      });
+    // try {
+    //   axios.defaults.withCredentials = true;
+    //   const res = await axios.post(
+    //     "http://localhost:3001/api/auth/register",
+    //     credentials
+    //   );
+    //   dispatch({ type: "REGISTER_SUCCESS", payload: res.data.details });
+    //   setOpenAddSnackbar(true)
+    //   setTimeout(()=>{
+    //     navigate('/login');
+    //   },1000)
+    // } catch (err) {
+    //   dispatch({ type: "REGISTER_FAILURE", payload: err.response.data });
+    // }
   };
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -63,113 +76,121 @@ export default function Register() {
 
   return (
     <>
-    <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              "url(https://image.thanhnien.vn/w1024/Uploaded/2022/pwivoviu/2022_09_16/cau-vang--1-anh-nt-739.jpg)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
+      <ThemeProvider theme={theme}>
+        <Grid container component="main" sx={{ height: "100vh" }}>
+          <CssBaseline />
+          <Grid
+            item
+            xs={false}
+            sm={4}
+            md={7}
             sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              backgroundImage:
+                "url(https://image.thanhnien.vn/w1024/Uploaded/2022/pwivoviu/2022_09_16/cau-vang--1-anh-nt-739.jpg)",
+              backgroundRepeat: "no-repeat",
+              backgroundColor: (t) =>
+                t.palette.mode === "light"
+                  ? t.palette.grey[50]
+                  : t.palette.grey[900],
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
+          />
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            md={5}
+            component={Paper}
+            elevation={6}
+            square
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Đăng Ký
-            </Typography>
             <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
+              sx={{
+                my: 8,
+                mx: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Tên Tài Khoản"
-                name="username"
-                autoComplete="username"
-                autoFocus
-                onChange={handleChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="email"
-                label="Email"
-                type="text"
-                id="email"
-                onChange={handleChange}
-                autoComplete="current-password"
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Mật Khẩu"
-                type="password"
-                id="password"
-                onChange={handleChange}
-                autoComplete="current-password"
-              />
-              <p style={{color: 'red'}}>{error && error.message}</p>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={handleClick}
-                disabled={loading}
-              >
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
                 Đăng Ký
-              </Button>
-              <Grid container>
-                <Grid item xs></Grid>
-                <Grid item>
-                  <Link href="/login" variant="body2">
-                    {"Bạn đã có tài khoản? Đăng Nhập"}
-                  </Link>
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={handleSubmit}
+                sx={{ mt: 1 }}
+              >
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Tên Tài Khoản"
+                  name="username"
+                  autoComplete="username"
+                  autoFocus
+                  onChange={handleChange}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="email"
+                  label="Email"
+                  type="text"
+                  id="email"
+                  onChange={handleChange}
+                  autoComplete="current-password"
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Mật Khẩu"
+                  type="password"
+                  id="password"
+                  onChange={handleChange}
+                  autoComplete="current-password"
+                />
+                <p style={{ color: "red" }}>{error && error.message}</p>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={handleClick}
+                  disabled={loading}
+                >
+                  Đăng Ký
+                </Button>
+                <Grid container>
+                  <Grid item xs></Grid>
+                  <Grid item>
+                    <Link href="/login" variant="body2">
+                      {"Bạn đã có tài khoản? Đăng Nhập"}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </ThemeProvider>
-    <Snackbar
-        anchorOrigin={{vertical: 'top',horizontal: 'right'}}
+      </ThemeProvider>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={openAddSnackbar}
         onClose={handleCloseAlert}
         autoHideDuration={1500}
       >
         <Alert variant="filled" severity="success" onClose={handleCloseAlert}>
-              Đăng Ký Thành Công
+          Đăng Ký Thành Công
         </Alert>
       </Snackbar>
     </>

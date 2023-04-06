@@ -1,6 +1,10 @@
 import React from "react";
 import "./TourCard.css";
 import { useNavigate } from "react-router-dom";
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import SellIcon from '@mui/icons-material/Sell';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 export default function TourCard({ data, slideCard, searchCard, newCard }) {
   const navigate = useNavigate();
@@ -20,9 +24,9 @@ export default function TourCard({ data, slideCard, searchCard, newCard }) {
               style={{ height: 180 }}
             />
           </div>
-          <span className="fpNameSearch">{title}</span>
-          <span className="fpCitySearch">{timetour}</span>
-          <span className="fpPrice">{priceadults} VNĐ</span>
+          <span className="fpNameSearch">{title.length > 30 ? title.substring(0,30)+'...': title}</span>
+          <span className="fpCitySearch"> <EventNoteIcon/> {timetour || <Skeleton count={5}/>}</span>
+          <span className="fpPrice"> <SellIcon></SellIcon> {priceadults?.toLocaleString('vi', {style : 'currency', currency : 'VND'})}</span>
         </div>
       )}
       {slideCard && (
@@ -35,7 +39,7 @@ export default function TourCard({ data, slideCard, searchCard, newCard }) {
               style={{ height: 180 }}
             />
           </div>
-          <span className="fpNameSlide">{title}</span>
+          <span className="fpNameSlide">{title.length > 30 ? title.substring(0,30)+'...': title}</span>
           <span className="fpCitySlide">{timetour}</span>
         </div>
       )}
@@ -49,9 +53,9 @@ export default function TourCard({ data, slideCard, searchCard, newCard }) {
               className="fpImg"
             />
           </div>
-          <span className="fpName">{title}</span>
-          <span className="fpCity">{timetour}</span>
-          <span className="fpPrice">{priceadults} VNĐ</span>
+          <span className="fpName">{title.length > 30 ? title.substring(0,30)+'...': title}</span>
+          <span className="fpCity"><EventNoteIcon/> <span style={{fontWeight: 'inherit',color: 'black'}}>{timetour}</span></span>
+          <span className="fpPrice"><SellIcon></SellIcon> <span style={{fontSize: '19px',color: 'red',fontWeight: 'bold'}}> {priceadults?.toLocaleString('vi', {style : 'currency', currency : 'VND'})} </span></span>
         </div>
       )}
     </>

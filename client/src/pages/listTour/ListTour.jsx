@@ -8,8 +8,21 @@ import TourCard from "../../components/tourCard/TourCard";
 import Pagination from "@mui/material/Pagination";
 import queryString from "query-string";
 import { Radio, Space } from "antd";
+import {
+  faBed,
+  faCar,
+  faCircleInfo,
+  faHouse,
+  faLocationDot,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Footer from "../../components/footer/Footer";
+import { Empty } from "antd";
+import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { Breadcrumb } from "antd";
 
-const List = () => {
+const ListTour = () => {
   const location = useLocation();
   console.log(location.state);
   const [title, setTitle] = useState();
@@ -73,8 +86,8 @@ const List = () => {
     setDate({ ...date, [e.target.name]: e.target.value });
   };
   const handleSearch = () => {
-    if(date === undefined && title === undefined){
-      return
+    if (date === undefined && title === undefined) {
+      return;
     }
     if (date === undefined) {
       setSearchParams({ ...searchParams, title });
@@ -101,11 +114,14 @@ const List = () => {
           dataTour = await axios.get(
             `http://localhost:3001/api/tours?title=${location.state.title}`
           );
-        } else if (location.state.title === "") {
+          }
+         if (location.state.title === "") {
+          console.log('nnn',location.state.date.datestart)
           dataTour = await axios.get(
-            `http://localhost:3001/api/tours?datestart=${location.state.date.datestart?.datestart}&dateend=${location.state.date.dateend?.dateend}`
+            `http://localhost:3001/api/tours?datestart=${location.state.date.datestart}&dateend=${location.state.date.dateend}`
           );
-        } else {
+        } 
+        if(location.state.title != "" && location.state.date != undefined) {
           dataTour = await axios.get(
             `http://localhost:3001/api/tours?title=${location.state.title}&datestart=${location.state.date.datestart?.datestart}&dateend=${location.state.date.dateend?.dateend}`
           );
@@ -118,7 +134,6 @@ const List = () => {
         }
         setNumOfPage(arrNumPage);
       } else {
-        console.log(Object.fromEntries(searchParams));
         axios.defaults.withCredentials = true;
         const query = queryString.stringify(Object.fromEntries(searchParams));
         const newTour = await axios.get(
@@ -126,10 +141,12 @@ const List = () => {
         );
         setDataTourSearch(newTour.data.tours);
         const lengthPages = Math.ceil(newTour.data.countTour / 6);
+        console.log(lengthPages)
         const arrNumPage = [];
         for (let i = 1; i <= lengthPages; i++) {
           arrNumPage.push(i);
         }
+        console.log(arrNumPage)
         setNumOfPage(arrNumPage);
       }
     } catch (error) {
@@ -140,9 +157,22 @@ const List = () => {
     getDataTourSearch();
   }, [searchParams]);
   return (
-    <div>
+    <div className="list-main">
       <Navbar />
       <Header type="list" />
+      {/* <h1 className="homeTitle" >
+        <FontAwesomeIcon icon={faLocationDot} /> Danh Sách Tour Du Lịch <hr style={{marginTop: 10}}/>
+      </h1> */}
+      <div style={{ margin: '20px 40px 0px 40px',width: '1200px' }}>
+        <Breadcrumb>
+          <Breadcrumb.Item href="/">
+            <HomeOutlined />
+            <span>Trang chủ</span>
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Tour du lịch</Breadcrumb.Item>
+        </Breadcrumb>
+      </div>
+
       <div className="listContainer">
         <div className="box-filter">
           <div className="filter-by-search">
@@ -194,13 +224,16 @@ const List = () => {
         </div>
         <div className="list-item-search">
           {dataTourSearch?.length === 0 ? (
-            <p>Không có kết quả</p>
+            <Empty
+              description="không tìm thấy kết quả"
+              style={{ display: "block", margin: "auto" }}
+            />
           ) : (
             dataTourSearch?.map((item) => {
               return (
                 <TourCard
                   searchCard={true}
-                  data={item}
+                  data={item} 
                   key={item._id}
                 ></TourCard>
               );
@@ -218,8 +251,9 @@ const List = () => {
           onChange={(e, value) => handlePageChange(value)}
         />
       </div>
+      <Footer />
     </div>
   );
 };
 
-export default List;
+export default ListTour;

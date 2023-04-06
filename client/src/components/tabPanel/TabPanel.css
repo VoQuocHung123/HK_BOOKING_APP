@@ -1,17 +1,22 @@
 #simple-tabpanel-0{
-    height: 500px;
-    overflow: scroll;
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    overflow-wrap: initial;
+}
+#simple-tabpanel-1{
+    background-color: white;
 }
 .content-review{
-    width: 80%;
+    width: 100%;
     display: flex;
     justify-content: space-around;
-    border: 1px solid gray;
+    border: 1px solid gainsboro;
     border-radius: 10px;
 }
 .input-review{
     padding: 15px;
-    width: 60%;
+    width: 78%;
     border: none;
 }
 .btn-send-review{
@@ -30,8 +35,10 @@ textarea:focus, input:focus{
     outline: none;
 }
 .comment-item{
-    width: 60%;
+    width: 100%;
     display: flex;
+    align-items: center;
+    border-bottom: 1px solid gainsboro;
 }
 .content-rating-item{
     margin-left: 15px;
@@ -46,4 +53,21 @@ textarea:focus, input:focus{
     color: red;
     font-size: medium;
     margin-left: 50px;
+}
+.btn-read-more{
+    position: absolute;
+    bottom: -30px;
+    left: 42%;
+    padding: 10px 15px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.body-description img{
+    max-width: 700px;
 }

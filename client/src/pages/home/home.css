@@ -10,8 +10,9 @@
 }
 
 .homeTitle{
-  width: 1024px;
+  width: 100%;
   font-size: 20px;
+  margin-left: 250px;
 }
 .new-tours{
   display: flex;
@@ -24,4 +25,21 @@
   justify-content: space-between;
   gap: 20px;
   z-index: 1;
+}
+@media (max-width: 900px) {
+  .homeContainer{
+    margin-top: 120px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .featured{
+    flex-direction: column;
+  }
+  .fp{
+    flex-direction: column;
+  }
+  .homeTitle{
+    margin-left: 0;
+  }
+  
 }

@@ -156,7 +156,7 @@ const ListBooked = ({ idUser, listTour, listCar }) => {
                     </li>
                     <li>
                       <strong>Tổng Tiền:</strong>
-                      {row.totalprice}
+                      {row.totalprice.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
                     </li>
                   </ul>
                 </TableCell>

@@ -13,6 +13,21 @@ import { useContext, useEffect } from "react";
 import axios from "axios";
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from "react-router-dom";
+import GoogleMapReact from 'google-map-react';
+import { geocodeByAddress, getLatLng} from 'react-google-places-autocomplete'
+import {
+  faBed,
+  faCar,
+  faCircleInfo,
+  faHouse,
+  faLocationDot,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+
+const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 function TabPanel(props) {
   const { data, children, value, index, ...other } = props;
@@ -48,10 +63,24 @@ export default function BasicTabs({ data }) {
   const [valueRating, setValueRating] = React.useState(0);
   const [valueContent, setValueContent] = React.useState('');
   const [reviews, setReviews] = React.useState([]);
+  const [coords, setCoords] =  React.useState({})
   const [hover, setHover] = React.useState(-1);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [error, setError]= React.useState('')
+  const [readMore,setReadMore] = React.useState(false)
+  const clickReadMore = ()=>{
+    setReadMore(!readMore)
+  }
+  useEffect(()=>{
+    const fn = async ()=>{
+      console.log('abc')
+      const result = await geocodeByAddress(data.location)
+      const lnglat = await getLatLng(result[0])
+      setCoords(lnglat)
+    }
+    fn()
+  },[data.location])
   const labels = {
     1: "Rất Tệ",
     2: "Tệ",
@@ -77,6 +106,8 @@ export default function BasicTabs({ data }) {
         const newDataReview = {content: valueContent, rating: valueRating}
         axios.defaults.withCredentials = true;
         await axios.post(`http://localhost:3001/api/reviews/${data._id}`,newDataReview)
+        setError('')
+        setValueRating(0)
         getReviews();
       }else{
         navigate('/login')
@@ -108,14 +139,17 @@ export default function BasicTabs({ data }) {
         >
           <Tab label="Mô Tả" {...a11yProps(0)} />
           <Tab label="Đánh Giá Tour" {...a11yProps(1)} />
-          <Tab label="Lưu Ý" {...a11yProps(2)} />
-        </Tabs>
+          <Tab label="Vị Trí" {...a11yProps(2)} />
+        </Tabs> 
       </Box>
       <TabPanel value={value} index={0}>
-        {parse(data.description)}
+        <div className="body-description">{ readMore ? parse(data.description) : parse(data.description.substring(0,1200)) }</div>
+        <button className="btn-read-more" onClick={clickReadMore}> {readMore ? 'Thu Gọn': 'Xem Thêm'} {readMore? <ExpandLessIcon/> :<ExpandMoreIcon/> } </button>
       </TabPanel>
       <TabPanel value={value} index={1}>
         {reviews.map((item) => {
+          console.log(item)
+          if(item.status === 'disable') return
           return (
             <>
               <div className="comment-item">
@@ -134,7 +168,7 @@ export default function BasicTabs({ data }) {
         })}
         <div className="add-review">
           <div className="vote-rating">
-            <span>Vote rating:</span>
+            <span style={{paddingRight: 20, fontWeight: 'bold'}}>Vote rating: </span>
             <Rating
               name="hover-feedback"
               value={valueRating}
@@ -169,9 +203,21 @@ export default function BasicTabs({ data }) {
         </div>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <strong>
-          Quý khách có thể xem trạng thái các tour đã đặt ở Profile
-        </strong>
+        <h3 style={{padding: 10}}>Địa Điểm : {data.location}</h3>
+      <div style={{ height: '100vh', width: '100%' }}>
+      <GoogleMapReact
+        bootstrapURLKeys={{ key: "AIzaSyCF18zyGxk5tGHwhb8pFbFUSArIPqxcT2g" }}
+        defaultCenter={coords}
+        defaultZoom={18}
+        center={coords}
+      >
+        <AnyReactComponent
+          lat={coords?.lat}
+          lng={coords?.lng}
+          text={<FontAwesomeIcon icon={faLocationDot} color="red" size="3x"/>}
+        />
+      </GoogleMapReact>
+    </div>
       </TabPanel>
     </Box>
   );

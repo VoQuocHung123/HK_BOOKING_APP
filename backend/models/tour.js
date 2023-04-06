@@ -10,6 +10,7 @@ const Tour = new Schema(
     dateend: Date, 
     numberseats: Number,
     category: String,
+    location: String,
     image: String,
     slideimage: [String],
     description: String,

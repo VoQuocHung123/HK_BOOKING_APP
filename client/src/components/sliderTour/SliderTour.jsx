@@ -27,7 +27,7 @@ function SamplePrevArrow(props) {
 export default function SliderTour({ dataTourIn, dataTourOut}) {
   console.log(dataTourIn);
   var settings = {
-    dots:  true,
+    dots:  false,
     infinite: true,
     speed: 300,
     slidesToShow: 5,

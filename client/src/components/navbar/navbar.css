@@ -1,22 +1,30 @@
 .navbar{
-  height: 50px;
-  background-color: #003580;
+  height: 70px;
+  background-color: #1b98e6;
   display: flex;
   justify-content: center;
+  position: fixed;
+  z-index: 16;
+  width: 100%;
+  top: 0;
 }
 
 .navContainer{
-  width: 100%;
-  max-width: 1024px;
+  width: 90%;
+  max-width: 90%;
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: #1b98e6;
+  border: 0 1px 0 1px solid;
+  border-radius: 5px;
 }
 
 .logo{
   font-size : 30px;
   font-weight: 700;
+  z-index: 3;
 }
 
 .navButton{
@@ -27,3 +35,16 @@
   color: #003580;
   border-radius: 10px;
 }
+.nav-link{
+  color: black;
+}
+#basic-button{
+  border: 1px solid white;
+  padding: 5px 20px;
+  background-color: white;
+}
+@media (max-width: 800px) {
+  #basic-button{
+    padding: 0 10px;
+  }
+} 

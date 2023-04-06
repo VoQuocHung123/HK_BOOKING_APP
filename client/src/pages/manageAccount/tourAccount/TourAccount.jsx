@@ -15,9 +15,11 @@ import Snackbar from "@mui/material/Snackbar";
 import { Link } from "react-router-dom";
 import ListBooked from "../../../components/listbooked/ListBooked";
 import SideBar from "../../../components/sidebar/SideBar";
+import { useSelector } from "react-redux";
 
 export default function TourAccount() {
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
+  const user = useSelector(state => state.user.user)
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [dataUser, setDataUser] = useState(user);
   console.log(dataUser);

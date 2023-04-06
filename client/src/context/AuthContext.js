@@ -46,6 +46,18 @@ const AuthReducer = (state, action) => {
         loading: false,
         error: action.payload,
       }
+    case "CHANGEPASSWORD_SUCCESS":
+      return{
+        user: action.payload,
+        loading: false,
+        error: null 
+      }
+    case "CHANGEPASSWORD_FAILURE":
+      return {
+        user: state.user,
+        loading: false,
+        error: action.payload,
+      }
     default:
       return state;
   }
@@ -53,6 +65,7 @@ const AuthReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+  console.log(state.user)
 
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(state.user));
