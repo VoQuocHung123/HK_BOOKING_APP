@@ -34,8 +34,9 @@ export default function SignInSide() {
     try {
       axios.defaults.withCredentials = true;
       const res = await axios.post("http://localhost:3001/api/auth/login", credentials);
+      console.log(res.data)
       if (res.data.isadmin) {
-        dispatch({ type: "LOGIN_SUCCESS", payload: res.data.details });
+        dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
         navigate("/admin");
       } else {
         dispatch({

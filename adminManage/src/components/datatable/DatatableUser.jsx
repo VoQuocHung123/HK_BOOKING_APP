@@ -12,8 +12,12 @@ import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
 
 const DatatableUser = () => {
+  const {accessToken} = useContext(AuthContext)
+  console.log(accessToken)
   const [dataUsers, setDataUsers] = useState([]);
   const [titleDelete, setTitleDelete]= useState();
   const [openDeleteSnackbar, setOpenDeleteSnackbar]= useState(false);
@@ -30,7 +34,7 @@ const DatatableUser = () => {
   const getDataUsers = async () =>{
     try {
       axios.defaults.withCredentials = true;
-      const listData = await axios.get('http://localhost:3001/api/users')
+      const listData = await axios.get('http://localhost:3001/api/users',{headers: {token: 'Bearer '+ accessToken}})
       listData.data.map((item)=>{
         return item['id']= item._id
       })

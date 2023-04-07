@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   user: JSON.parse(localStorage.getItem("user")) || null,
   loading: false,
   error: null,
+  accessToken: ''
 };
 
 export const AuthContext = createContext(INITIAL_STATE);
@@ -18,9 +19,10 @@ const AuthReducer = (state, action) => {
       };
     case "LOGIN_SUCCESS":
       return {
-        user: action.payload,
+        user: action.payload.details,
         loading: false,
         error: null,
+        accessToken: action.payload.accessToken
       };
     case "LOGIN_FAILURE":
       return {
@@ -33,6 +35,7 @@ const AuthReducer = (state, action) => {
         user: null,
         loading: false,
         error: null,
+        accessToken : ''
       };
     default:
       return state;
@@ -52,6 +55,7 @@ export const AuthContextProvider = ({ children }) => {
         user: state.user,
         loading: state.loading,
         error: state.error,
+        accessToken: state.accessToken,
         dispatch,
       }}
     >
